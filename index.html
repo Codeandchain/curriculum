@@ -1,0 +1,703 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Curriculum Code &amp; Chain Dakar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: blueprint grid page, "// NN" section markers, mono display + sans body, black blocks for schedules — mirrors the Code & Chain site */
+:root{
+  --bg:#ffffff; --bg-alt:#f5f6f5; --card:#ffffff; --card-alt:#f4f5f4;
+  --grid:rgba(29,94,74,.07); --line:#e2e5e3; --line-strong:#111;
+  --ink:#0b0c0c; --muted:#5b625f; --faint:#8a918d;
+  --green:#1d5e4a; --green-soft:#7ea795; --green-tint:#eef4f1;
+  --block:#0a0a0a; --on-block:#f3f4f3; --on-block-muted:#9aa29e;
+  --warn:#9a6a00; --warn-tint:#fff4d6; --code-bg:#0d1110; --code-ink:#d8e4de;
+  --mono:"Space Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --maxw:1180px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c0f0e; --bg-alt:#111513; --card:#141917; --card-alt:#171d1a;
+  --grid:rgba(126,167,149,.07); --line:#25302b; --line-strong:#d9dfdc;
+  --ink:#ebefed; --muted:#a2aba6; --faint:#76807b;
+  --green:#6cc4a0; --green-soft:#3d6d5b; --green-tint:#14231d;
+  --block:#050706; --on-block:#f3f4f3; --on-block-muted:#8f9893;
+  --warn:#f0c160; --warn-tint:#2b2410; --code-bg:#070908; --code-ink:#d8e4de;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c0f0e; --bg-alt:#111513; --card:#141917; --card-alt:#171d1a;
+  --grid:rgba(126,167,149,.07); --line:#25302b; --line-strong:#d9dfdc;
+  --ink:#ebefed; --muted:#a2aba6; --faint:#76807b;
+  --green:#6cc4a0; --green-soft:#3d6d5b; --green-tint:#14231d;
+  --block:#050706; --on-block:#f3f4f3; --on-block-muted:#8f9893;
+  --warn:#f0c160; --warn-tint:#2b2410; --code-bg:#070908; --code-ink:#d8e4de;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:66px 66px; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--green)}
+:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)} .small{font-size:.875rem}
+code{font-family:var(--mono);font-size:.86em;background:var(--green-tint);color:var(--green);padding:.1em .35em;border-radius:3px}
+
+/* type scale */
+.h1{font-family:var(--mono);font-weight:700;font-size:clamp(2.1rem,5.6vw,4.2rem);line-height:1.12;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.h2{font-family:var(--mono);font-weight:700;font-size:clamp(1.8rem,3.6vw,2.7rem);line-height:1.15;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.h3{font-family:var(--mono);font-weight:700;font-size:1.35rem;line-height:1.25;margin:0;text-wrap:balance}
+.h4{font-family:var(--mono);font-weight:700;font-size:1.02rem;line-height:1.35;margin:0}
+.eyebrow{font-family:var(--mono);font-weight:700;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin:0}
+.lead{font-size:1.15rem;color:var(--muted);max-width:62ch;margin:0}
+.green{color:var(--green)}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--mono);font-weight:700;font-size:1.15rem;letter-spacing:-.02em}
+.brand svg{flex:none}
+.wm{display:grid;line-height:1.1}.wm em{font-style:normal;font-family:var(--sans);font-weight:500;font-size:.68rem;letter-spacing:.08em;color:var(--muted)}
+.brand small{font-weight:400;color:var(--muted);font-size:.8rem;letter-spacing:.06em}
+.nav{display:flex;gap:28px}
+.nav a{color:var(--ink);text-decoration:none;font-size:.95rem}
+.nav a:hover{color:var(--green)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--mono);font-weight:700;font-size:.92rem;padding:12px 22px;border-radius:4px;text-decoration:none;border:1.5px solid transparent;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.btn-solid{background:var(--green);color:#fff}
+.btn-solid:hover{background:color-mix(in srgb,var(--green) 85%,#000)}
+.btn-line{border-color:var(--line-strong);color:var(--ink);background:transparent}
+.btn-line:hover{border-color:var(--green);color:var(--green)}
+.btn-sm{padding:9px 16px;font-size:.84rem}
+.progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--green);width:0}
+@media (max-width:860px){.nav{display:none}}
+
+/* sections */
+section.sec{padding-block:clamp(56px,8vw,96px);border-bottom:1px solid var(--line)}
+section.sec.alt{background:color-mix(in srgb,var(--bg-alt) 88%,transparent)}
+.kicker{display:flex;align-items:center;gap:16px;font-family:var(--mono);font-weight:700;color:var(--green);font-size:.9rem;margin-bottom:18px}
+.kicker i{flex:1;height:1px;background:var(--line)}
+.sec-head{display:grid;gap:14px;margin-bottom:40px}
+.meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.tag{font-family:var(--mono);font-size:.78rem;font-weight:700;padding:5px 10px;border-radius:3px;background:var(--green);color:#fff}
+.tag.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+
+/* hero */
+.hero{padding-block:clamp(56px,9vw,110px) clamp(40px,6vw,72px);position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero-mark{position:absolute;right:-40px;top:10px;width:min(48vw,600px);opacity:.9;pointer-events:none}
+.hero-mark circle{fill:none;stroke:var(--line);stroke-width:1.5}
+.hero .wrap{position:relative;display:grid;gap:26px}
+.loc{display:flex;align-items:center;gap:10px}
+.cta{display:flex;flex-wrap:wrap;gap:14px}
+
+/* 3-hour bar */
+.runbar{margin-top:18px;display:grid;gap:10px;max-width:880px}
+.runbar-track{display:flex;gap:4px;height:62px}
+.seg{display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-radius:3px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);min-width:0;overflow:hidden;transition:border-color .15s}
+.seg:hover{border-color:var(--green)}
+.seg b{font-family:var(--mono);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg span{font-size:.78rem;color:var(--muted);white-space:nowrap}
+.seg.main{background:var(--green);border-color:var(--green);color:#fff}
+.seg.main span{color:rgba(255,255,255,.8)}
+.runbar-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.75rem;color:var(--faint)}
+
+/* grids & cards */
+.two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(28px,5vw,64px);align-items:start}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.cards.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:900px){.cards.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.cards,.cards.three{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 22px 24px;display:grid;gap:8px;align-content:start;min-width:0}
+.card.soft{background:var(--card-alt)}
+.card p{margin:0;color:var(--muted);font-size:.93rem}
+.card .num{font-family:var(--mono);font-weight:700;color:var(--green);font-size:.82rem}
+.callout{border-left:4px solid var(--green);background:var(--card-alt);padding:20px 24px;border-radius:0 4px 4px 0}
+.callout p{margin:0}
+.frame{border:1.5px solid var(--green);border-radius:4px;padding:22px 24px;background:var(--green-tint)}
+.dashed{border:2px dashed var(--green);border-radius:4px;padding:22px 24px}
+
+/* checklist */
+.check{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.check label{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.check input{appearance:none;flex:none;width:20px;height:20px;margin-top:2px;border:1.5px solid var(--line-strong);border-radius:3px;display:grid;place-content:center;cursor:pointer;background:var(--card)}
+.check input:checked{background:var(--green);border-color:var(--green)}
+.check input:checked::after{content:"";width:10px;height:6px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.check input:checked + span{color:var(--muted);text-decoration:line-through}
+.ticks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ticks li{position:relative;padding-left:22px;color:var(--muted)}
+.ticks li::before{content:"›";position:absolute;left:4px;top:-1px;color:var(--green);font-weight:700}
+.ticks strong{color:var(--ink)}
+
+/* schedule block (black header, like the event schedule) */
+.sched{border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--card)}
+.sched-head{background:var(--block);color:var(--on-block);padding:20px 26px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.sched-head .d{font-family:var(--mono);font-size:.82rem;color:var(--on-block-muted)}
+.sched-head .t{font-family:var(--mono);font-weight:700;font-size:1.15rem}
+.row{display:grid;grid-template-columns:96px minmax(0,1fr) minmax(0,220px);gap:20px;padding:18px 26px;border-top:1px solid var(--line);align-items:start}
+.row:nth-child(even){background:var(--card-alt)}
+.row .time{font-family:var(--mono);font-weight:700;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:2px}
+.row h4{margin:0 0 4px;font-family:var(--mono);font-size:.98rem}
+.row p{margin:0;color:var(--muted);font-size:.93rem}
+.row .cp{font-size:.84rem;color:var(--green);font-family:var(--mono);font-weight:700}
+.row .cp::before{content:"✓ ";}
+.row.brk h4{color:var(--faint)}
+@media (max-width:720px){.row{grid-template-columns:72px minmax(0,1fr)}.row .cp{grid-column:2}}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:.93rem;min-width:560px}
+th{font-family:var(--mono);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;text-align:left;color:var(--muted);padding:12px 16px;border-bottom:1.5px solid var(--line-strong);background:var(--card-alt)}
+td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:500}
+
+/* code */
+.codebox{border-radius:4px;overflow:hidden;background:var(--code-bg);border:1px solid var(--line)}
+.codebar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.08);font-family:var(--mono);font-size:.8rem;color:#8fa59b}
+.copy{font-family:var(--mono);font-size:.78rem;font-weight:700;background:transparent;color:#cfe3d9;border:1px solid rgba(255,255,255,.2);border-radius:3px;padding:5px 12px;cursor:pointer}
+.copy:hover{border-color:#7ea795}
+pre{margin:0;padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:.84rem;line-height:1.65;color:var(--code-ink)}
+pre .c{color:#6f8a7e} pre .k{color:#8fd3b4} pre .s{color:#e7c98a}
+
+/* pitch bar */
+.pitch{display:flex;gap:3px;margin:8px 0 6px}
+.pitch div{height:54px;border-radius:3px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.74rem;font-weight:700;color:var(--muted);min-width:0;overflow:hidden}
+.pitch div.demo{background:var(--green);border-color:var(--green);color:#fff}
+.pitch-legend{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.74rem;color:var(--faint)}
+.steps{counter-reset:s;list-style:none;margin:24px 0 0;padding:0;display:grid;gap:0}
+.steps li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.steps li::before{counter-increment:s;content:counter(s,decimal-leading-zero) ".";font-family:var(--mono);font-weight:700;color:var(--green);font-size:.85rem}
+.steps b{font-family:var(--mono)}
+.steps p{margin:2px 0 0;color:var(--muted);font-size:.93rem}
+.steps .sec-t{font-family:var(--mono);font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* glossary */
+.gloss{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:4px;background:var(--card);overflow:hidden}
+.gloss div{padding:14px 18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.gloss b{display:block;font-family:var(--mono);font-size:.92rem}
+.gloss span{font-size:.84rem;color:var(--muted)}
+@media (max-width:720px){.gloss{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* black finale */
+.finale{background:var(--block);color:var(--on-block);padding-block:clamp(64px,9vw,110px);text-align:center}
+.finale .h2{color:var(--on-block)}
+.finale p{color:var(--on-block-muted);max-width:60ch;margin:16px auto 0}
+.finale .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(24px,5vw,56px);margin-top:44px}
+.finale .stats b{display:block;font-family:var(--mono);font-size:1.5rem}
+.finale .stats span{font-size:.85rem;color:var(--on-block-muted)}
+.finale .eyebrow{color:#6cc4a0}
+.finale .btn-line{border-color:#555;color:var(--on-block)}
+.finale .cta{justify-content:center;margin-top:32px}
+.foot{background:var(--block);color:var(--on-block-muted);font-size:.82rem;padding-block:20px;border-top:1px solid #222}
+.foot .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+.foot a{color:var(--on-block-muted)}
+
+/* notes */
+.gate{min-height:70vh;display:grid;place-items:center;padding-block:64px}
+.gate-box{width:min(460px,100%);background:var(--card);border:1px solid var(--line);border-radius:4px;padding:32px;display:grid;gap:16px}
+.gate-box input{width:100%;font-family:var(--mono);font-size:1rem;padding:13px 14px;border:1.5px solid var(--line-strong);border-radius:4px;background:var(--bg);color:var(--ink);letter-spacing:.06em}
+.gate-box input:focus{outline:none;border-color:var(--green)}
+.err{color:#c0392b;font-size:.9rem;margin:0;min-height:1.4em}
+.notes{padding-block:clamp(48px,7vw,80px);display:grid;gap:56px}
+.notes-head{display:grid;gap:12px}
+.nsec{display:grid;gap:16px}
+.roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:960px){.roles{grid-template-columns:1fr}}
+.role{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px;display:grid;gap:12px;align-content:start}
+.pill{font-family:var(--mono);font-size:.74rem;font-weight:700;padding:3px 8px;border-radius:3px;white-space:nowrap}
+.pill.ok{background:var(--green-tint);color:var(--green)}
+.pill.warn{background:var(--warn-tint);color:var(--warn)}
+.lockline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Code &amp; Chain Dakar, accueil">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="2.6"/><circle cx="17" cy="17" r="6" fill="none" stroke="currentColor" stroke-width="2.6"/></svg>
+      <span class="wm"><span>code&amp;chain <small>DAKAR</small></span><em>by Bitnob</em></span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#programme">Programme</a>
+      <a href="#partie-1">Bitcoin</a>
+      <a href="#partie-2">Atelier API</a>
+      <a href="#partie-3">Pitch</a>
+      <a href="#ressources">Ressources</a>
+    </nav>
+    <a class="btn btn-solid btn-sm" href="#notes" id="notesLink">
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+      Notes
+    </a>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<main id="site">
+<!-- HERO -->
+<section class="hero" id="top">
+  <svg class="hero-mark" viewBox="0 0 26 26" aria-hidden="true"><circle cx="9" cy="9" r="6"/><circle cx="17" cy="17" r="6"/></svg>
+  <div class="wrap">
+    <p class="eyebrow loc">
+      <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
+      Dakar, Sénégal · 17–18 octobre 2026 · Bootcamp
+    </p>
+    <h1 class="h1">Apprendre. Coder. Pitcher.<br><span class="green">Le curriculum Code &amp; Chain</span><br>Dakar 2026.</h1>
+    <p class="lead">Trois heures pour passer de « qu'est-ce que Bitcoin ? » à un paiement Lightning reçu par votre propre code via l'API Bitnob, puis à un pitch prêt pour le Demo Day.</p>
+    <div class="cta">
+      <a class="btn btn-solid" href="#partie-2">Voir l'atelier API</a>
+      <a class="btn btn-line" href="https://bitnob.dev/" target="_blank" rel="noopener">Documentation Bitnob ↗</a>
+    </div>
+    <div class="runbar" aria-label="Déroulé des 3 heures">
+      <div class="runbar-track">
+        <a class="seg" style="flex:30" href="#partie-1"><b>01 · Bitcoin</b><span>30 min</span></a>
+        <a class="seg main" style="flex:120" href="#partie-2"><b>02 · Atelier Bitcoin &amp; API Bitnob</b><span>120 min · J1 · 11:00–13:00</span></a>
+        <a class="seg" style="flex:30" href="#partie-3"><b>03 · Pitch</b><span>30 min</span></a>
+      </div>
+      <div class="runbar-scale"><span>0</span><span>1 h</span><span>2 h</span><span>3 h</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 00 PROGRAMME -->
+<section class="sec" id="programme">
+  <div class="wrap">
+    <div class="kicker"><span>// 00</span><i></i></div>
+    <div class="two">
+      <div style="display:grid;gap:24px">
+        <h2 class="h2">Ce que vous saurez faire en sortant</h2>
+        <p class="lead">Chaque équipe repart avec un compte sandbox Bitnob fonctionnel, un premier paiement Lightning réussi, une idée de projet cadrée et la structure de son pitch.</p>
+        <div class="frame">
+          <p class="eyebrow" style="margin-bottom:14px">Format</p>
+          <div class="cards" style="gap:14px 24px">
+            <div><span class="muted small">Durée</span><div class="h4">3 heures</div></div>
+            <div><span class="muted small">Stack</span><div class="h4">Node.js 18+ · Express</div></div>
+            <div><span class="muted small">Animation</span><div class="h4">Alphonse Mehounme · Ramane Boda</div></div>
+            <div><span class="muted small">Environnement</span><div class="h4">Sandbox + réseau réel</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;gap:16px">
+        <p class="eyebrow" style="color:var(--muted)">À apprêter avant le 17 octobre</p>
+        <ul class="check" id="prereqs">
+          <li><label><input type="checkbox" id="pr-laptop"><span>Ordinateur portable chargé + chargeur</span></label></li>
+          <li><label><input type="checkbox" id="pr-node"><span>Node.js 18 ou plus récent (<code>node -v</code>)</span></label></li>
+          <li><label><input type="checkbox" id="pr-editor"><span>Un éditeur de code (VS Code ou autre)</span></label></li>
+          <li><label><input type="checkbox" id="pr-postman"><span>Postman ou curl</span></label></li>
+          <li><label><input type="checkbox" id="pr-github"><span>Un compte GitHub (le projet final doit être dans un dépôt public)</span></label></li>
+          <li><label><input type="checkbox" id="pr-bitnob"><span>Un compte sur <a href="https://app.bitnob.com/" target="_blank" rel="noopener">app.bitnob.com</a>, si possible créé à l'avance</span></label></li>
+          <li><label><input type="checkbox" id="pr-wallet"><span>Un portefeuille Bitcoin et Lightning sur votre téléphone : on construit en sandbox, mais on fera aussi de vraies transactions</span></label></li>
+          <li><label><input type="checkbox" id="pr-tunnel"><span>ngrok ou cloudflared, pour recevoir les webhooks en local</span></label></li>
+        </ul>
+        <p class="muted small">Cochez au fur et à mesure : votre progression reste enregistrée dans ce navigateur.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 BITCOIN -->
+<section class="sec alt" id="partie-1">
+  <div class="wrap">
+    <div class="kicker"><span>// 01</span><i></i></div>
+    <div class="sec-head">
+      <h2 class="h2">Partie 1 · Intro au Bitcoin<br>et pourquoi Bitcoin</h2>
+      <p class="lead">Savoir expliquer en une phrase ce qu'est Bitcoin, pourquoi il compte pour l'Afrique de l'Ouest, et quelle couche choisir pour son projet.</p>
+      <div class="meta-row"><span class="tag">30 min</span><span class="tag ghost">Animé par Alphonse Mehounme</span><span class="tag ghost">Slides + démo live</span></div>
+    </div>
+
+    <div class="sched">
+      <div class="sched-head"><div><div class="d">Partie 01</div><div class="t">Bitcoin, de zéro à Lightning</div></div><div class="d">Jour 1 · après l'ouverture</div></div>
+      <div class="row"><div class="time">0–5′</div><div><h4>Intro</h4><p>« Combien coûte et combien de temps prend l'envoi de 50 000 FCFA vers le Nigeria ou le Kenya ? »</p></div><div class="cp">Interaction</div></div>
+      <div class="row"><div class="time">5–12′</div><div><h4>Le problème de la monnaie</h4><p>Monnaie = confiance + registre. Frais transfrontaliers, intermédiaires, accès bancaire limité, inflation.</p></div><div class="cp">Slides</div></div>
+      <div class="row"><div class="time">12–20′</div><div><h4>Comment Bitcoin fonctionne</h4><p>Blockchain publique, minage et preuve de travail, offre fixe de 21 millions, 1 BTC = 100 000 000 sats, la clé privée comme propriété.</p></div><div class="cp">Schéma</div></div>
+      <div class="row"><div class="time">20–26′</div><div><h4>On-chain ou Lightning</h4><p>On-chain : sûr, ~10 min par bloc, frais variables. Lightning : instantané, frais minimes, factures BOLT11. Custodial ou non-custodial.</p></div><div class="cp">Démo live</div></div>
+      <div class="row"><div class="time">26–30′</div><div><h4>Pourquoi construire ici</h4><p>Transferts de la diaspora, paiement marchand, épargne en USDT, paie de freelances, payouts. Transition vers l'atelier.</p></div><div class="cp">Discussion</div></div>
+    </div>
+
+    <div class="two" style="margin-top:40px">
+      <div style="display:grid;gap:16px">
+        <h3 class="h3">On-chain ou Lightning ?</h3>
+        <div class="tbl"><table style="min-width:420px">
+          <thead><tr><th></th><th>On-chain</th><th>Lightning</th></tr></thead>
+          <tbody>
+            <tr><td>Vitesse</td><td>~10 min par bloc</td><td>Environ 1 seconde</td></tr>
+            <tr><td>Frais Bitnob</td><td>3 000 sats vers une adresse Bitnob, dynamiques sinon</td><td>10 sats par envoi</td></tr>
+            <tr><td>Format</td><td>Adresse SegWit ou Taproot</td><td>Facture BOLT11 (<code>ln…</code>)</td></tr>
+            <tr><td>Idéal pour</td><td>Gros montants, épargne</td><td>Petits paiements du quotidien</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div style="display:grid;gap:16px">
+        <h3 class="h3">Quatre messages à retenir</h3>
+        <div class="cards">
+          <div class="card"><span class="num">01</span><p>Bitcoin est une monnaie numérique sans intermédiaire, à offre limitée.</p></div>
+          <div class="card"><span class="num">02</span><p>Lightning rend Bitcoin utilisable pour les petits paiements.</p></div>
+          <div class="card"><span class="num">03</span><p>Les stablecoins (USDT, USDC) apportent une valeur stable en dollar.</p></div>
+          <div class="card"><span class="num">04</span><p>Bitnob fournit l'infrastructure. Vous construisez le produit.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:40px;display:grid;gap:16px">
+      <h3 class="h3">Glossaire français · anglais</h3>
+      <div class="gloss">
+        <div><b>Portefeuille</b><span>wallet</span></div>
+        <div><b>Clé privée</b><span>private key</span></div>
+        <div><b>Facture</b><span>invoice</span></div>
+        <div><b>Dépôt</b><span>deposit</span></div>
+        <div><b>Retrait</b><span>withdrawal</span></div>
+        <div><b>Garde des fonds</b><span>custody</span></div>
+        <div><b>Frais de réseau</b><span>network fee</span></div>
+        <div><b>Confirmation</b><span>confirmation</span></div>
+        <div><b>Satoshi (sat)</b><span>0,00000001 BTC</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 ATELIER -->
+<section class="sec" id="partie-2">
+  <div class="wrap">
+    <div class="kicker"><span>// 02</span><i></i></div>
+    <div class="sec-head">
+      <h2 class="h2">Partie 2 · Atelier<br>Bitcoin &amp; API Bitnob</h2>
+      <p class="lead">Un client Node.js signé, une facture Lightning créée et payée, un webhook reçu en local, et le choix des produits Bitnob pour votre projet.</p>
+      <div class="meta-row"><span class="tag">120 min</span><span class="tag ghost">Jour 1 · 11:00–13:00</span><span class="tag ghost">Live coding · Ramane Boda</span></div>
+    </div>
+
+    <div class="dashed" style="margin-bottom:32px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <div><p class="eyebrow">Règle de l'atelier</p><p class="h4" style="margin-top:4px">On ne passe à l'étape suivante qu'après avoir validé le checkpoint.</p></div>
+    </div>
+
+    <div class="sched">
+      <div class="sched-head"><div><div class="d">Partie 02</div><div class="t">Du compte sandbox au webhook</div></div><div class="d">Checkpoint par étape</div></div>
+      <div class="row"><div class="time">0–10′</div><div><h4>2.1 · Panorama Bitnob</h4><p>Bitcoin on-chain et Lightning, stablecoins (USDT/USDC sur Tron, Polygon, Solana), payouts vers 40+ pays, trading, cartes virtuelles, comptes virtuels.</p></div><div></div></div>
+      <div class="row"><div class="time">10–30′</div><div><h4>2.2 · Setup</h4><p>Compte sur app.bitnob.com, création d'une app, Client ID et Client Secret sandbox, fichier <code>.env</code>, <code>npm init</code>.</p></div><div class="cp">Clés dans .env</div></div>
+      <div class="row"><div class="time">30–50′</div><div><h4>2.3 · Authentification HMAC</h4><p>Les quatre en-têtes, la chaîne signée <code>CLIENT_ID:TIMESTAMP:NONCE:PAYLOAD</code>, live coding de <code>bitnob.js</code>.</p></div><div class="cp">GET /api/whoami → 200</div></div>
+      <div class="row"><div class="time">50–75′</div><div><h4>2.4 · Recevoir en Bitcoin</h4><p>Créer un client (<code>POST /api/customers</code>), générer une adresse on-chain, créer une facture Lightning, décoder un <code>paymentRequest</code>, la payer. Puis une vraie transaction depuis votre portefeuille.</p></div><div class="cp">Facture ln… payée</div></div>
+      <div class="row brk"><div class="time">75–85′</div><div><h4>Pause</h4></div><div></div></div>
+      <div class="row"><div class="time">85–100′</div><div><h4>2.5 · Webhooks</h4><p>Serveur Express <code>POST /webhooks/bitnob</code>, tunnel public, URL déclarée dans le dashboard. Événements <code>transfer.success</code> (Lightning) et <code>deposit.success</code> (on-chain).</p></div><div class="cp">Événement reçu</div></div>
+      <div class="row"><div class="time">100–112′</div><div><h4>2.6 · Aller plus loin</h4><p>Bitcoin et stablecoins ensemble : un petit produit développé en direct qui reçoit un paiement Lightning, le convertit en USDT, met à jour le solde via webhook, puis permet de retirer vers un compte mobile money via un payout, pour montrer comment combiner les briques.</p></div><div></div></div>
+      <div class="row"><div class="time">112–120′</div><div><h4>2.7 · Cadrage projet</h4><p>Canevas d'équipe : problème, utilisateur, produits Bitnob utilisés, parcours de démo en trois étapes.</p></div><div class="cp">Canevas validé</div></div>
+    </div>
+
+    <div class="two" style="margin-top:48px">
+      <div style="display:grid;gap:16px;min-width:0">
+        <h3 class="h3">Le client signé</h3>
+        <p class="muted" style="margin:0">HMAC-SHA256 avec le Client Secret, encodé en hex, selon le <a href="https://bitnob.dev/api-reference/authentication#overview" target="_blank" rel="noopener">format documenté par Bitnob</a>. On signe et on envoie exactement la même chaîne JSON.</p>
+        <div class="codebox">
+          <div class="codebar"><span>bitnob.js</span><button class="copy" type="button" data-target="code1">Copier</button></div>
+<pre id="code1"><span class="k">import</span> crypto <span class="k">from</span> <span class="s">'node:crypto'</span>;
+<span class="k">import</span> <span class="s">'dotenv/config'</span>;
+
+<span class="k">const</span> { BITNOB_CLIENT_ID: ID, BITNOB_CLIENT_SECRET: SECRET } = process.env;
+<span class="k">const</span> BASE = <span class="s">'https://api.bitnob.com'</span>;
+
+<span class="k">export async function</span> bitnob(method, path, body) {
+  <span class="k">const</span> payload = body ? JSON.stringify(body) : <span class="s">''</span>;   <span class="c">// GET = chaîne vide</span>
+  <span class="k">const</span> ts = Math.floor(Date.now() / <span class="s">1000</span>).toString(); <span class="c">// secondes</span>
+  <span class="k">const</span> nonce = crypto.randomBytes(<span class="s">16</span>).toString(<span class="s">'hex'</span>);
+  <span class="k">const</span> signature = crypto.createHmac(<span class="s">'sha256'</span>, SECRET)
+    .update(<span class="s">`${ID}:${ts}:${nonce}:${payload}`</span>)
+    .digest(<span class="s">'hex'</span>);
+
+  <span class="k">const</span> res = <span class="k">await</span> fetch(BASE + path, {
+    method,
+    headers: {
+      <span class="s">'Content-Type'</span>: <span class="s">'application/json'</span>,
+      <span class="s">'X-Auth-Client'</span>: ID,
+      <span class="s">'X-Auth-Timestamp'</span>: ts,
+      <span class="s">'X-Auth-Nonce'</span>: nonce,
+      <span class="s">'X-Auth-Signature'</span>: signature,
+    },
+    body: payload || undefined,  <span class="c">// la chaîne signée, telle quelle</span>
+  });
+  <span class="k">return</span> res.json();
+}
+
+<span class="c">// Checkpoint 2.3</span>
+console.log(<span class="k">await</span> bitnob(<span class="s">'GET'</span>, <span class="s">'/api/whoami'</span>));</pre>
+        </div>
+      </div>
+      <div style="display:grid;gap:16px;min-width:0">
+        <h3 class="h3">Le webhook en local</h3>
+        <p class="muted" style="margin:0">On crédite l'utilisateur à la réception du webhook, jamais sur la seule réponse du front.</p>
+        <div class="codebox">
+          <div class="codebar"><span>server.js</span><button class="copy" type="button" data-target="code2">Copier</button></div>
+<pre id="code2"><span class="k">import</span> express <span class="k">from</span> <span class="s">'express'</span>;
+
+<span class="k">const</span> app = express();
+app.use(express.json());
+<span class="k">const</span> vus = <span class="k">new</span> Set(); <span class="c">// références déjà traitées</span>
+
+app.post(<span class="s">'/webhooks/bitnob'</span>, (req, res) =&gt; {
+  <span class="k">const</span> { event, data } = req.body;
+  <span class="k">if</span> (vus.has(data?.reference)) <span class="k">return</span> res.sendStatus(<span class="s">200</span>);
+  vus.add(data?.reference);
+  console.log(<span class="s">'Webhook :'</span>, event, data);
+  <span class="c">// transfer.success → paiement Lightning réglé</span>
+  <span class="c">// deposit.success  → BTC on-chain reçu</span>
+  res.sendStatus(<span class="s">200</span>);
+});
+
+app.listen(<span class="s">3000</span>, () =&gt; console.log(<span class="s">'Écoute sur :3000'</span>));
+<span class="c">// puis : ngrok http 3000</span></pre>
+        </div>
+        <p class="muted small" style="margin:0">La forme exacte du corps des webhooks et leur vérification de signature sont confirmées par l'équipe avant le bootcamp.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;display:grid;gap:16px">
+      <h3 class="h3">Erreurs fréquentes</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Symptôme</th><th>Cause probable</th><th>Correction</th></tr></thead>
+        <tbody>
+          <tr><td>401 sur tous les appels</td><td>Clés de production en sandbox, ou l'inverse</td><td>Utiliser le Client Secret sandbox</td></tr>
+          <tr><td>401 seulement sur les POST</td><td>Le corps envoyé diffère du corps signé</td><td>Signer et envoyer la même chaîne <code>payload</code></td></tr>
+          <tr><td>401 intermittent</td><td>Horloge décalée (fenêtre de ±5 min) ou timestamp en millisecondes</td><td>Synchroniser l'heure, diviser <code>Date.now()</code> par 1000</td></tr>
+          <tr><td>Webhook jamais reçu</td><td>URL <code>localhost</code> déclarée, ou tunnel fermé</td><td>Déclarer l'URL publique du tunnel</td></tr>
+          <tr><td>Crédit en double</td><td>Webhook rejoué</td><td>Traitement idempotent avec la <code>reference</code></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div style="margin-top:48px;display:grid;gap:16px">
+      <h3 class="h3">Bonnes pratiques</h3>
+      <div class="cards three">
+        <div class="card soft"><h4 class="h4">Secret côté serveur</h4><p>Le Client Secret ne va ni dans le front ni sur GitHub. <code>.env</code> dans <code>.gitignore</code>.</p></div>
+        <div class="card soft"><h4 class="h4">Une référence par opération</h4><p>Stocker l'état de chaque opération et ignorer les doublons.</p></div>
+        <div class="card soft"><h4 class="h4">Attendre les confirmations</h4><p>On-chain : au moins 3 confirmations avant de créditer.</p></div>
+        <div class="card soft"><h4 class="h4">Une adresse par dépôt</h4><p>Ne pas réutiliser les adresses, pour préserver la confidentialité.</p></div>
+        <div class="card soft"><h4 class="h4">Le webhook fait foi</h4><p>Le statut final vient du webhook ou d'un appel serveur, jamais du navigateur.</p></div>
+        <div class="card soft"><h4 class="h4">Dépôt public propre</h4><p>Règle du hackathon : projet publié dans un dépôt GitHub public, README inclus.</p></div>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;display:grid;gap:16px">
+      <h3 class="h3">Idées de projets pour démarrer</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Idée</th><th>Produits Bitnob</th><th>Démo en 3 étapes</th></tr></thead>
+        <tbody>
+          <tr><td>Caisse marchande Lightning</td><td>Lightning, webhooks</td><td>QR affiché → client paie → ticket confirmé</td></tr>
+          <tr><td>Transfert diaspora vers mobile money</td><td>Stablecoins, payouts</td><td>Dépôt USDT → quote → bénéficiaire payé</td></tr>
+          <tr><td>Tontine numérique en sats</td><td>Clients, adresses, Lightning</td><td>Cotisations → solde commun → tour versé</td></tr>
+          <tr><td>Paie des freelances en USDT</td><td>Stablecoins, trading</td><td>Facture → paiement USDT → conversion</td></tr>
+          <tr><td>Carte virtuelle pour abonnements</td><td>Cartes virtuelles, stablecoins</td><td>Recharge USDT → carte créée → paiement en ligne</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 PITCH -->
+<section class="sec alt" id="partie-3">
+  <div class="wrap">
+    <div class="kicker"><span>// 03</span><i></i></div>
+    <div class="sec-head">
+      <h2 class="h2">Partie 3 · Faire une<br>bonne présentation</h2>
+      <p class="lead">La structure d'un pitch démo de 3 minutes, et ce que le jury regarde au Demo Day.</p>
+      <div class="meta-row"><span class="tag">30 min</span><span class="tag ghost">Animé par Alphonse Mehounme</span><span class="tag ghost">Avant le Demo Day</span></div>
+    </div>
+
+    <div class="two">
+      <div style="display:grid;gap:12px;min-width:0">
+        <h3 class="h3">Le pitch en 180 secondes</h3>
+        <p class="muted" style="margin:0">La démo prend la moitié du temps. Tout le reste la prépare ou la prolonge.</p>
+        <div class="pitch" aria-label="Répartition du pitch en secondes">
+          <div style="flex:15">15s</div><div style="flex:20">20s</div><div style="flex:20">20s</div>
+          <div class="demo" style="flex:90">Démo live · 90s</div><div style="flex:20">20s</div><div style="flex:15">15s</div>
+        </div>
+        <div class="pitch-legend"><span>0:00</span><span>1:30</span><span>3:00</span></div>
+        <ol class="steps">
+          <li><div><b>Accroche</b><p>Une personne, un problème concret. « Awa vend du thiéboudienne à Dakar ; ses clients de la diaspora ne peuvent pas la payer à distance. »</p></div><span class="sec-t">15 s</span></li>
+          <li><div><b>Problème</b><p>Pourquoi les solutions actuelles échouent : frais, délais, accès.</p></div><span class="sec-t">20 s</span></li>
+          <li><div><b>Solution</b><p>Votre produit en une phrase, sans jargon.</p></div><span class="sec-t">20 s</span></li>
+          <li><div><b>Démo live</b><p>Le parcours en trois étapes, vu par l'utilisateur.</p></div><span class="sec-t">90 s</span></li>
+          <li><div><b>Sous le capot</b><p>Un schéma : votre app → API Bitnob → webhook. Nommez les produits utilisés.</p></div><span class="sec-t">20 s</span></li>
+          <li><div><b>Suite</b><p>Marché visé, prochaine étape, l'équipe.</p></div><span class="sec-t">15 s</span></li>
+        </ol>
+      </div>
+      <div style="display:grid;gap:28px;min-width:0">
+        <div style="display:grid;gap:14px">
+          <h3 class="h3">Ce que le jury note</h3>
+          <div class="cards" style="gap:10px">
+            <div class="card"><span class="num">01</span><h4 class="h4">Innovation &amp; créativité</h4></div>
+            <div class="card"><span class="num">02</span><h4 class="h4">Mise en œuvre technique</h4></div>
+            <div class="card"><span class="num">03</span><h4 class="h4">Usage de Bitcoin &amp; de l'API Bitnob</h4></div>
+            <div class="card"><span class="num">04</span><h4 class="h4">Impact réel</h4></div>
+            <div class="card"><span class="num">05</span><h4 class="h4">UX &amp; design</h4></div>
+            <div class="card"><span class="num">06</span><h4 class="h4">Présentation &amp; open source</h4></div>
+          </div>
+        </div>
+        <div class="callout" style="display:grid;gap:12px">
+          <p class="h4">Règles d'or</p>
+          <ul class="ticks">
+            <li>Une idée par slide, peu de mots, lisible du fond de la salle.</li>
+            <li>Toujours une vidéo de secours de la démo.</li>
+            <li>Comptes et données de démo pré-remplis : aucune saisie de clés en direct.</li>
+            <li>Un orateur par section. Répéter au chronomètre au moins deux fois.</li>
+          </ul>
+        </div>
+        <div style="display:grid;gap:12px">
+          <p class="h4">Trois questions à préparer</p>
+          <ul class="ticks">
+            <li>« Pourquoi Bitcoin, et pas Wave ou Orange Money ? »</li>
+            <li>« Comment gérez-vous la volatilité ? »</li>
+            <li>« Qui paie les frais, et combien ? »</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sched" style="margin-top:44px">
+      <div class="sched-head"><div><div class="d">Partie 03</div><div class="t">Déroulé de la session</div></div></div>
+      <div class="row"><div class="time">0–8′</div><div><h4>Ce que le jury retient</h4><p>Un vrai problème, une démo qui marche, un usage clair de l'API Bitnob, une équipe crédible.</p></div><div></div></div>
+      <div class="row"><div class="time">8–15′</div><div><h4>La structure en six temps</h4><p>Le squelette ci-dessus, avec des exemples.</p></div><div></div></div>
+      <div class="row"><div class="time">15–25′</div><div><h4>Atelier en équipe</h4><p>Chaque équipe écrit son accroche et ses trois étapes de démo.</p></div><div class="cp">Squelette rempli</div></div>
+      <div class="row"><div class="time">25–30′</div><div><h4>Deux pitchs tests</h4><p>Deux équipes volontaires pitchent 60 secondes. Retour : une force, une amélioration.</p></div><div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESSOURCES -->
+<section class="sec" id="ressources">
+  <div class="wrap">
+    <div class="kicker"><span>// 04</span><i></i></div>
+    <div class="sec-head"><h2 class="h2">Ressources</h2><p class="lead">La documentation Bitnob pour chaque produit utilisé pendant l'atelier et le hackathon.</p></div>
+    <div class="cards three">
+      <a class="card" style="text-decoration:none;color:inherit" href="https://bitnob.dev/api-reference/authentication#overview" target="_blank" rel="noopener"><h4 class="h4">Authentification ↗</h4><p>En-têtes et signature HMAC.</p></a>
+      <a class="card" style="text-decoration:none;color:inherit" href="https://bitnob.dev/docs/bitcoin/overview" target="_blank" rel="noopener"><h4 class="h4">Bitcoin &amp; Lightning ↗</h4><p>Portefeuilles, adresses, frais, webhooks.</p></a>
+      <a class="card" style="text-decoration:none;color:inherit" href="https://bitnob.dev/docs/bitcoin/issuing-bitcoin-addresses-and-lightning-invoices" target="_blank" rel="noopener"><h4 class="h4">Adresses et factures ↗</h4><p>Générer une adresse, créer une facture.</p></a>
+      <a class="card" style="text-decoration:none;color:inherit" href="https://bitnob.dev/docs/stablecoins/overview" target="_blank" rel="noopener"><h4 class="h4">Stablecoins ↗</h4><p>USDT et USDC sur plusieurs blockchains.</p></a>
+      <a class="card" style="text-decoration:none;color:inherit" href="https://bitnob.dev/docs/payouts/overview" target="_blank" rel="noopener"><h4 class="h4">Payouts ↗</h4><p>Quote, initialize, finalize.</p></a>
+      <a class="card" style="text-decoration:none;color:inherit" href="https://bitnob.dev/api-reference" target="_blank" rel="noopener"><h4 class="h4">API Reference ↗</h4><p>Tous les endpoints.</p></a>
+    </div>
+    <p class="muted small" style="margin-top:18px">Questions sur l'API : le <a href="https://discord.gg/u6T52ATp6f" target="_blank" rel="noopener">Discord Bitnob</a>. Contact de l'événement : <span class="mono">hello@bitnob.com</span></p>
+  </div>
+</section>
+
+<section class="finale">
+  <div class="wrap">
+    <p class="eyebrow">● Rendez-vous le 17 octobre</p>
+    <h2 class="h2" style="margin-top:18px">Prêts à construire la<br>finance de demain ?</h2>
+    <p>Installez les prérequis, créez votre compte Bitnob, et venez avec une question sur un vrai problème de paiement.</p>
+    <div class="cta"><a class="btn btn-solid" href="#programme">Revoir les prérequis</a><a class="btn btn-line" href="https://bitnob.dev/" target="_blank" rel="noopener">Documentation Bitnob ↗</a></div>
+    <div class="stats">
+      <div><b>17–18 oct</b><span>Dates</span></div>
+      <div><b>Dakar</b><span>Sénégal</span></div>
+      <div><b>3 h</b><span>Bootcamp</span></div>
+      <div><b>$5K</b><span>Prix du hackathon</span></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- NOTES (encrypted) -->
+<main id="notesView" hidden>
+  <div class="wrap">
+    <div class="gate" id="gate">
+      <form class="gate-box" id="gateForm" autocomplete="off">
+        <p class="eyebrow">Accès réservé</p>
+        <h1 class="h3">Notes animateurs &amp; organisateurs</h1>
+        <p class="muted" style="margin:0">Entrez le code d'accès communiqué par Alphonse Mehounme.</p>
+        <label for="code" class="small muted">Code d'accès</label>
+        <input id="code" name="code" type="password" spellcheck="false" autocapitalize="characters" required>
+        <p class="err" id="err" role="alert"></p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-solid" type="submit" id="unlockBtn">Déverrouiller</button>
+          <a class="btn btn-line" href="#top">Retour au curriculum</a>
+        </div>
+      </form>
+    </div>
+    <div class="notes" id="notesBody" hidden>
+      <div class="lockline"><a class="btn btn-line btn-sm" href="#top">← Curriculum</a><button class="btn btn-line btn-sm" type="button" id="lockBtn">Verrouiller</button></div>
+      <div id="notesContent"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="foot"><div class="wrap"><span>Code &amp; Chain Dakar 2026 · Curriculum du bootcamp</span><a href="#notes">Accès animateurs</a></div></footer>
+
+<script>
+const PAYLOAD = {"salt":"xbZAdQOE5okeFQgoDC/wOw==","iv":"veG33dwnqf3CZLcc","iter":250000,"ct":"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"};
+
+/* ---------- routing ---------- */
+const site = document.getElementById('site');
+const notesView = document.getElementById('notesView');
+function route(){
+  const isNotes = location.hash === '#notes';
+  site.hidden = isNotes; notesView.hidden = !isNotes;
+  if (isNotes){ window.scrollTo(0,0); if(!unlocked) setTimeout(()=>document.getElementById('code').focus(),50); }
+}
+window.addEventListener('hashchange', route);
+
+/* ---------- decryption ---------- */
+let unlocked = false;
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function decrypt(code){
+  const enc = new TextEncoder();
+  const base = await crypto.subtle.importKey('raw', enc.encode(code.trim().toUpperCase()), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey({name:'PBKDF2', salt:b64(PAYLOAD.salt), iterations:PAYLOAD.iter, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['decrypt']);
+  const plain = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64(PAYLOAD.iv)}, key, b64(PAYLOAD.ct));
+  return new TextDecoder().decode(plain);
+}
+function showNotes(html){
+  document.getElementById('notesContent').innerHTML = html;
+  document.getElementById('gate').hidden = true;
+  document.getElementById('notesBody').hidden = false;
+  unlocked = true;
+}
+document.getElementById('gateForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = document.getElementById('err'), btn = document.getElementById('unlockBtn');
+  const code = document.getElementById('code').value;
+  err.textContent = ''; btn.disabled = true; btn.textContent = 'Vérification…';
+  try {
+    const html = await decrypt(code);
+    showNotes(html);
+    try { sessionStorage.setItem('cc-notes', code); } catch(_){}
+  } catch(_) {
+    err.textContent = 'Code incorrect. Vérifiez les majuscules et les tirets, puis réessayez.';
+  }
+  btn.disabled = false; btn.textContent = 'Déverrouiller';
+});
+document.getElementById('lockBtn').addEventListener('click', () => {
+  document.getElementById('notesContent').innerHTML = '';
+  document.getElementById('notesBody').hidden = true;
+  document.getElementById('gate').hidden = false;
+  document.getElementById('code').value = '';
+  unlocked = false;
+  try { sessionStorage.removeItem('cc-notes'); } catch(_){}
+});
+(async () => { try { const c = sessionStorage.getItem('cc-notes'); if (c) showNotes(await decrypt(c)); } catch(_){} })();
+
+/* ---------- prerequisites (per-viewer) ---------- */
+document.querySelectorAll('#prereqs input').forEach(box => {
+  try { box.checked = localStorage.getItem('cc-'+box.id) === '1'; } catch(_){}
+  box.addEventListener('change', () => { try { localStorage.setItem('cc-'+box.id, box.checked ? '1' : '0'); } catch(_){} });
+});
+
+/* ---------- copy buttons ---------- */
+document.querySelectorAll('.copy').forEach(btn => btn.addEventListener('click', () => {
+  const el = document.getElementById(btn.dataset.target);
+  const done = () => { btn.textContent = 'Copié'; setTimeout(()=>btn.textContent='Copier',1600); };
+  navigator.clipboard.writeText(el.innerText).then(done).catch(() => {
+    const r = document.createRange(); r.selectNodeContents(el);
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Sélectionné';
+  });
+}));
+
+/* ---------- reading progress ---------- */
+const bar = document.getElementById('progress');
+addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - innerHeight;
+  bar.style.width = (h > 0 && !site.hidden ? (scrollY / h * 100) : 0) + '%';
+}, {passive:true});
+
+route();
+</script>
+
+</body></html>
